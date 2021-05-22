@@ -15,16 +15,16 @@ const obj = [
     password: "hellovish",
   },
   {
-    firstname: "Saugata",
-    lastname: "Shee",
-    email: "saugata@gmail.com",
-    password: "hellosau",
-  },
-  {
     firstname: "Sukalyan",
     lastname: "Makal",
     email: "makal@gmail.com",
     password: "hellomakal",
+  },
+  {
+    firstname: "Saugata",
+    lastname: "Shee",
+    email: "saugata@gmail.com",
+    password: "hellosau",
   },
   {
     firstname: "Souvik",
@@ -42,23 +42,28 @@ const obj = [
 
 const obj2 = [
   {
-    dob: new Date(1997, 08, 28),
+    email: "vishal@gmail.com",
+    dob: new Date("1997-08-28"),
     mobile_no: 5648721499,
   },
   {
-    dob: new Date(1997, 01, 27),
+    email: "makal@gmail.com",
+    dob: new Date("1993-09-04"),
     mobile_no: 5648761489,
   },
   {
-    dob: new Date(1997, 09, 04),
+    email: "saugata@gmail.com",
+    dob: new Date("1997-01-27"),
     mobile_no: 5642721489,
   },
   {
-    dob: new Date(1997, 05, 04),
+    email: "alu@gmail.com",
+    dob: new Date("1995-05-04"),
     mobile_no: 5648521489,
   },
   {
-    dob: new Date(1998, 03, 23),
+    email: "raktim@gmail.com",
+    dob: new Date("1998-03-23"),
     mobile_no: 5638721489,
   },
 ];
@@ -69,22 +74,23 @@ for (let i = 0; i < obj.length; i++) {
   let newUSer = new User(obj[i]);
   newUSer
     .save()
-    .then((resolve) => console.log(`User ${i} saved`))
+    .then((resolve) => {
+      usersRec.push(resolve);
+      //   console.log(`User ${i} saved ${resolve._id}`);
+    })
     .catch((err) => console.log(err));
-  usersRec.push(newUSer);
 }
 
-if (usersRec.length == 5) {
-  for (let j = 0; j < obj2.length; j++) {
-    obj2[j]["user_id"] = usersRec[j]["_id"];
-    let newProfile = new UsersProfile(obj2[j]);
-    newProfile
-      .save()
-      .then((resolve) => console.log(`Profile ${j} saved`))
-      .catch((err) => console.log(err));
-    usersProfile.push(newProfile);
+const adding = async () => {
+  for (let c = 0; c < obj2.length; c++) {
+    let user = await User.findOne({ email: obj2[c].email });
+    delete obj2[c].email;
+    obj2[c]["user_id"] = user._id;
+    let userProfile = new UsersProfile(obj2[c]);
+    await userProfile.save();
+    usersProfile.push(userProfile);
   }
-}
-
-console.log(usersRec);
-console.log(usersProfile);
+  console.log(usersRec);
+  console.log(usersProfile);
+};
+setTimeout(adding, 2000);
